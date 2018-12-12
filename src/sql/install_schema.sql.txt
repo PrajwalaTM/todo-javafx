@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS Todo;
+CREATE TABLE Todo(slNo INT PRIMARY KEY AUTOINCREMENT, particulars VARCHAR(50), notes VARCHAR(255), reminder DATETIME, pending_from DATETIME, cleared BIT);
