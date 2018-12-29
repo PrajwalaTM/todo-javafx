@@ -6,9 +6,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="919.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainLayoutController">
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainLayoutController">
    <children>
-         <MenuBar prefHeight="32.0" prefWidth="919.0" BorderPane.alignment="CENTER">
+         <MenuBar prefHeight="32.0" prefWidth="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" BorderPane.alignment="CENTER">
            <menus>
              <Menu mnemonicParsing="false" text="File">
                <items>
@@ -27,8 +28,13 @@
              </Menu>
            </menus>
          </MenuBar>
-         <TableView fx:id="todoTable" layoutY="32.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="312.0" prefWidth="919.0" BorderPane.alignment="CENTER">
+         <TableView fx:id="todoTable" layoutY="32.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" BorderPane.alignment="CENTER">
            <columns>
+               <TableColumn fx:id="todoSelector" prefWidth="50.0" >
+                   <cellValueFactory>
+                       <PropertyValueFactory property="todoSelector" />
+                   </cellValueFactory>
+               </TableColumn>
              <TableColumn fx:id="slNoColumn" prefWidth="50.0" text="Sl.No">
                  <cellValueFactory>
                      <PropertyValueFactory property="slNo" />
@@ -61,15 +67,13 @@
                </TableColumn>
            </columns>
          </TableView>
-      <Button fx:id="createTodo" layoutX="22.0" layoutY="358.0" mnemonicParsing="false" onAction="#createTodo" text="Create Todo" />
-      <Button fx:id="updateTodo" layoutX="175.0" layoutY="358.0" mnemonicParsing="false" text="Update Todo" />
-      <Button layoutX="343.0" layoutY="358.0" mnemonicParsing="false" text="Delete Todo" />
-      <Label layoutX="528.0" layoutY="363.0" text="Export To" />
-      <ToggleButton layoutX="612.0" layoutY="358.0" mnemonicParsing="false" text="PDF" toggleGroup="$exportGroup">
-         <toggleGroup>
-            <ToggleGroup fx:id="exportGroup" />
-         </toggleGroup>
-      </ToggleButton>
-      <ToggleButton layoutX="681.0" layoutY="358.0" mnemonicParsing="false" text="Excel" toggleGroup="$exportGroup" />
+      <AnchorPane layoutY="466.0" prefHeight="58.0" prefWidth="1077.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Label layoutX="742.0" layoutY="7.0" text="Export To" />
+            <Button fx:id="createTodo" layoutX="46.0" layoutY="2.0" mnemonicParsing="false" onAction="#createTodo" prefHeight="31.0" prefWidth="117.0" text="Add" />
+            <ComboBox layoutX="844.0" promptText="PDF" translateX="1.0" translateY="1.0" translateZ="1.0" />
+            <Button fx:id="delete" layoutX="225.0" layoutY="2.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="117.0" text="Delete" onAction="#deleteTodo" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

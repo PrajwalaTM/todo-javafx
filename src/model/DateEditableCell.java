@@ -29,7 +29,6 @@ public class DateEditableCell extends TableCell<TodoTableData, Date> {
         @Override
         public void cancelEdit() {
             super.cancelEdit();
-
             setText(getDate().toString());
             setGraphic(null);
         }
@@ -37,18 +36,19 @@ public class DateEditableCell extends TableCell<TodoTableData, Date> {
         @Override
         public void updateItem(Date item, boolean empty) {
             super.updateItem(item, empty);
-
             if (empty) {
                 setText(null);
                 setGraphic(null);
-            } else {
+            }
+            else {
                 if (isEditing()) {
                     if (datePicker != null) {
                         datePicker.setValue(getDate());
                     }
                     setText(null);
                     setGraphic(datePicker);
-                } else {
+                }
+                else {
                     setText(getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
                     setGraphic(null);
                 }
