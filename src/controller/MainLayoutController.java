@@ -17,35 +17,40 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.DateEditableCell;
+import model.RadioButtonEditableCell;
 import model.TodoTableData;
 
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainLayoutController implements Initializable {
 
     @FXML
-    public TableView<TodoTableData> todoTable;
+    private TableView<TodoTableData> todoTable;
     @FXML
-    public Button createTodo;
-    @FXML
-    public Button updateTodo;
+    private Button createTodo;
 
     final static TodoService service = new TodoService();
     
     @FXML
-    public TableColumn<TodoTableData,String> particularsColumn;
+    private TableColumn<TodoTableData,String> particularsColumn;
     @FXML
-    public TableColumn<TodoTableData,String>  notesColumn;
+    private TableColumn<TodoTableData,String>  notesColumn;
     @FXML
-    public TableColumn<TodoTableData,Date>  reminderColumn;
+    private TableColumn<TodoTableData,Date>  reminderColumn;
     @FXML
-    public TableColumn<TodoTableData,Date>  pendingFromColumn;
+    private TableColumn<TodoTableData,Date>  pendingFromColumn;
     @FXML
-    public TableColumn<TodoTableData,Boolean>  clearedColumn;
+    private TableColumn<TodoTableData,Boolean>  clearedColumn;
+    @FXML
+    private TableColumn<TodoTableData,Boolean> todoSelector;
+
+    private List<TodoTableData> selectedTodos;
 
 
     public void createTodo(ActionEvent actionEvent) throws IOException {
@@ -57,12 +62,56 @@ public class MainLayoutController implements Initializable {
         stage.show();
     }
 
+    public void deleteTodo(ActionEvent actionEvent) throws IOException{
+//        for (TodoTableData item : todoTable.getSelectionModel().getSelectedItems()) {
+//            System.out.println(item);
+//        }
+          selectedTodos.forEach(todo->{
+              System.out.println(todo);
+          });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        selectedTodos = new ArrayList<>();
+        todoTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         todoTable.itemsProperty().bind(service.valueProperty());
         service.start();
         todoTable.setEditable(true);
+
+        Callback<TableColumn<TodoTableData, Boolean>, TableCell<TodoTableData, Boolean>> todoSelectorCellFactory
+                = (TableColumn<TodoTableData, Boolean> param) -> new RadioButtonEditableCell();
+        todoSelector.setCellFactory(todoSelectorCellFactory);
+        todoSelector.setEditable(true);
+//        todoSelector.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,Boolean> event) -> {
+//            TablePosition<TodoTableData,Boolean> pos = event.getTablePosition();
+//            Boolean isSelected = event.getNewValue();
+//            System.out.println(isSelected);
+//            int row = pos.getRow();
+//            TodoTableData todo = event.getTableView().getItems().get(row);
+//            todo.setTodoSelector(isSelected);
+//            if(isSelected)
+//                selectedTodos.add(todo);
+//            else
+//                selectedTodos.remove(todo);
+//        });
+        todoSelector.setCellValueFactory(param -> {
+            TodoTableData todo = param.getValue();
+
+            SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(todo.getTodoSelector());
+
+            // When "Single?" column change.
+            booleanProp.addListener((observable, oldValue, newValue) -> {
+                todo.setTodoSelector(newValue);
+                //TodoDAO.updateTodo("cleared",Boolean.toString(todo.getCleared()),todo.getSlNo());
+                if(newValue)
+                    selectedTodos.add(todo);
+                else
+                    selectedTodos.remove(todo);
+            });
+            return booleanProp;
+        });
+
         particularsColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         particularsColumn.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,String> event)->{
             TablePosition<TodoTableData,String> pos = event.getTablePosition();
@@ -85,13 +134,13 @@ public class MainLayoutController implements Initializable {
                 = (TableColumn<TodoTableData, Date> param) -> new DateEditableCell();
         reminderColumn.setCellFactory(dateCellFactory);
         reminderColumn.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,Date> event) -> {
-         TablePosition<TodoTableData,Date> pos = event.getTablePosition();
-         Date newReminder = event.getNewValue();
-         int row = pos.getRow();
-         TodoTableData todo = event.getTableView().getItems().get(row);
-         todo.setReminder(newReminder);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-         TodoDAO.updateTodo("reminder",format.format(todo.getReminder()),todo.getSlNo());
+             TablePosition<TodoTableData,Date> pos = event.getTablePosition();
+             Date newReminder = event.getNewValue();
+             int row = pos.getRow();
+             TodoTableData todo = event.getTableView().getItems().get(row);
+             todo.setReminder(newReminder);
+             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+             TodoDAO.updateTodo("reminder",format.format(todo.getReminder()),todo.getSlNo());
         });
         pendingFromColumn.setCellFactory(dateCellFactory);
         pendingFromColumn.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,Date> event) -> {
@@ -104,38 +153,28 @@ public class MainLayoutController implements Initializable {
             TodoDAO.updateTodo("pending_from",format.format(todo.getPendingFrom()),todo.getSlNo());
         });
         clearedColumn.setCellFactory(CheckBoxTableCell.forTableColumn(clearedColumn));
-        clearedColumn.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,Boolean> event) -> {
-            TablePosition<TodoTableData,Boolean> pos = event.getTablePosition();
-            Boolean newCleared= event.getNewValue();
-            int row = pos.getRow();
-            TodoTableData todo = event.getTableView().getItems().get(row);
-            todo.setCleared(newCleared);
-            TodoDAO.updateTodo("cleared",Boolean.toString(todo.getCleared()),todo.getSlNo());
+//        clearedColumn.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,Boolean> event) -> {
+//            TablePosition<TodoTableData,Boolean> pos = event.getTablePosition();
+//            Boolean newCleared= event.getNewValue();
+//            int row = pos.getRow();
+//            TodoTableData todo = event.getTableView().getItems().get(row);
+//            todo.setCleared(newCleared);
+//            TodoDAO.updateTodo("cleared",Boolean.toString(todo.getCleared()),todo.getSlNo());
+//        });
+
+        clearedColumn.setCellValueFactory(param -> {
+            TodoTableData todo = param.getValue();
+
+            SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(todo.getCleared());
+
+            // When "Single?" column change.
+            booleanProp.addListener((observable, oldValue, newValue) -> {
+                todo.setCleared(newValue);
+                TodoDAO.updateTodo("cleared",Boolean.toString(todo.getCleared()),todo.getSlNo());
+            });
+            return booleanProp;
         });
-
-        clearedColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<TodoTableData, Boolean>, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<TodoTableData, Boolean> param) {
-                TodoTableData todo = param.getValue();
-
-                SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(todo.getCleared());
-
-                // When "Single?" column change.
-                booleanProp.addListener(new ChangeListener<Boolean>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-                                        Boolean newValue) {
-                        todo.setCleared(newValue);
-                        TodoDAO.updateTodo("cleared",Boolean.toString(todo.getCleared()),todo.getSlNo());
-                    }
-                });
-                return booleanProp;
-            }
-        });
-
         todoTable.refresh();
-
     }
 
 }
