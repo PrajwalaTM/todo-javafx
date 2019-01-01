@@ -31,6 +31,10 @@ import java.util.ResourceBundle;
 public class MainLayoutController implements Initializable {
 
     @FXML
+    private TableColumn slNoColumn;
+    @FXML
+    private TableColumn todoSelector;
+    @FXML
     private TableView<TodoTableData> todoTable;
     @FXML
     private Button createTodo;
@@ -74,6 +78,14 @@ public class MainLayoutController implements Initializable {
         todoTable.itemsProperty().bind(service.valueProperty());
         service.start();
         todoTable.setEditable(true);
+
+        todoSelector.prefWidthProperty().bind(todoTable.widthProperty().divide(20));
+        slNoColumn.prefWidthProperty().bind(todoTable.widthProperty().divide(16));
+        particularsColumn.prefWidthProperty().bind(todoTable.widthProperty().divide(4));
+        notesColumn.prefWidthProperty().bind(todoTable.widthProperty().divide(4));
+        reminderColumn.prefWidthProperty().bind(todoTable.widthProperty().divide(8));
+        pendingFromColumn.prefWidthProperty().bind(todoTable.widthProperty().divide(8));
+        clearedColumn.prefWidthProperty().bind(todoTable.widthProperty().divide(8));
 
         particularsColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         particularsColumn.setOnEditCommit((TableColumn.CellEditEvent<TodoTableData,String> event)->{
