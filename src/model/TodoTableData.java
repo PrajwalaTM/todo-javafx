@@ -4,13 +4,14 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.RadioButton;
 
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
 public class TodoTableData {
-    private SimpleBooleanProperty todoSelector;
+    private RadioButton todoSelector;
     private SimpleIntegerProperty slNo;
     private SimpleStringProperty particulars;
     private SimpleStringProperty notes;
@@ -19,7 +20,7 @@ public class TodoTableData {
     private SimpleBooleanProperty cleared;
 
     public TodoTableData() {
-        this.todoSelector  = new SimpleBooleanProperty();
+        this.todoSelector  = new RadioButton();
         this.slNo = new SimpleIntegerProperty();
         this.particulars = new SimpleStringProperty();
         this.notes = new SimpleStringProperty();
@@ -101,15 +102,11 @@ public class TodoTableData {
     }
 
 
-    public boolean getTodoSelector() {
-        return todoSelector.get();
+    public RadioButton getTodoSelector() {
+        return this.todoSelector;
     }
 
-    public SimpleBooleanProperty todoSelectorProperty() {
-        return todoSelector;
-    }
-
-    public void setTodoSelector(boolean todoSelector) {
-        this.todoSelector.set(todoSelector);
+    public void setTodoSelector(RadioButton todoSelector) {
+        this.todoSelector = todoSelector;
     }
 }
