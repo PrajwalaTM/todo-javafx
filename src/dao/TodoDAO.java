@@ -77,4 +77,34 @@ public class TodoDAO {
             System.out.println("ERROR: Update Todo failed");
         }
     }
+
+    public static void deleteTodos(List<TodoTableData> todoList) {
+        try {
+            DBUtil.dbConnect();
+            Connection connection = DBUtil.getConnection();
+            PreparedStatement pstmt = connection.prepareStatement(buildDeleteQuery(todoList.size()));
+            int itemNo=1;
+            for(TodoTableData todo:todoList){
+                pstmt.setInt(itemNo,todo.getSlNo());
+                itemNo++;
+            }
+            pstmt.executeUpdate();
+            DBUtil.dbDisconnect();
+            System.out.println("SUCCESS: DELETED TODO(s)");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.out.println("ERROR: Delete Todo(s) failed");
+        }
+    }
+    private static String buildDeleteQuery(int length) {
+        String query = " DELETE FROM TODO WHERE slNo IN (";
+        StringBuilder queryBuilder = new StringBuilder(query);
+        for( int i = 0; i< length; i++){
+            queryBuilder.append(" ?");
+            if(i != length -1) queryBuilder.append(",");
+        }
+        queryBuilder.append(")");
+        return queryBuilder.toString();
+    }
 }
